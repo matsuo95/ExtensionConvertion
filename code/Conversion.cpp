@@ -33,19 +33,3 @@ void Conversion::RenameExtension(CString Filepath) {
 
 	rename(previous_filepath, after_filepath);
 }
-
-void Conversion::RenameExtensionList(vector<CString> FilepathList) {
-
-	string str_Filepath, str_newFilepath;
-	const char *previous_filepath, *after_filepath;
-
-	for (int i = 0; i < FilepathList.size(); i++) {
-		str_Filepath = CStringA(FilepathList.at(i)).GetBuffer();
-		previous_filepath = str_Filepath.c_str();
-
-		str_newFilepath = CStringA(ConvertExtensionString(FilepathList.at(i))).GetBuffer();
-		after_filepath = str_newFilepath.c_str();
-
-		rename(previous_filepath, after_filepath);
-	}
-}

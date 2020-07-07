@@ -56,7 +56,7 @@ END_MESSAGE_MAP()
 
 CExtensionChangeDlg::CExtensionChangeDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EXTENSIONCHANGE_DIALOG, pParent)
-	, m_displaypath_text(_T(""))
+	
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -64,8 +64,6 @@ CExtensionChangeDlg::CExtensionChangeDlg(CWnd* pParent /*=nullptr*/)
 void CExtensionChangeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT1, m_edit_displaypath);
-	DDX_Text(pDX, IDC_EDIT1, m_displaypath_text);
 	DDX_Control(pDX, IDC_EDIT2, m_edit_previous_extension);
 	DDX_Control(pDX, IDC_EDIT3, m_edit_after_extension);
 	DDX_Control(pDX, IDC_LIST1, m_list_displaypath);
@@ -75,8 +73,6 @@ BEGIN_MESSAGE_MAP(CExtensionChangeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CExtensionChangeDlg::OnBnClickedReferenceButton)
-	ON_BN_CLICKED(IDC_BUTTON2, &CExtensionChangeDlg::OnBnClickedConversionButton)
 	ON_BN_CLICKED(IDC_BUTTON4, &CExtensionChangeDlg::OnBnClickedReferenceListButton)
 	ON_BN_CLICKED(IDC_BUTTON3, &CExtensionChangeDlg::OnBnClickedConversionListButton)
 	ON_BN_CLICKED(IDC_BUTTON5, &CExtensionChangeDlg::OnBnClickedButton5)
@@ -172,39 +168,6 @@ void CExtensionChangeDlg::OnPaint()
 HCURSOR CExtensionChangeDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
-}
-
-void CExtensionChangeDlg::OnBnClickedReferenceButton()
-{
-	CString PreviousExtension;
-	m_edit_previous_extension.GetWindowTextW(PreviousExtension);
-
-	CString txt1("(*."),txt2(")|*."),txt3(";||");
-
-	CString filter(txt1 + PreviousExtension + txt2 + PreviousExtension + txt3);
-	CFileDialog selDlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, filter);
-
-	if (selDlg.DoModal() == IDOK)
-	{
-		m_displaypath_text = selDlg.GetPathName();
-		UpdateData(FALSE);
-	}
-	
-	return;
-}
-
-void CExtensionChangeDlg::OnBnClickedConversionButton()
-{
-	CString PreviousExtension, AfterExtension,DisplayPath;
-
-	m_edit_previous_extension.GetWindowTextW(PreviousExtension);
-	m_edit_after_extension.GetWindowTextW(AfterExtension);
-	m_edit_displaypath.GetWindowTextW(DisplayPath);
-
-	Conversion after_conversion = Conversion(PreviousExtension, AfterExtension);
-	after_conversion.RenameExtension(DisplayPath);
-
-	return;
 }
 
 void CExtensionChangeDlg::OnBnClickedReferenceListButton()
@@ -342,7 +305,7 @@ BOOL CExtensionChangeDlg::GetFileList(CString path)
 		// 検索した結果がディレクトリの場合
 		CString msg;
 		CString filePath = fileFind.GetFilePath();
-		if (fileFind.IsDirectory())
+		if (fileFind.IsDirectory() && ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck() == BST_CHECKED)
 		{
 			msg.Format(_T("Directory:%s\n"), filePath);
 			AfxOutputDebugString(msg);
@@ -384,13 +347,7 @@ void CExtensionChangeDlg::OnBnClickedButton5()
 
 	UpdateData(TRUE);
 
-	BOOL bRes = SelectFolder(
-		this->m_hWnd,
-		NULL,
-		tchrText2,
-		BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE,
-		_T("フォルダーを選択してください。")
-	);
+	BOOL bRes = SelectFolder( this->m_hWnd, NULL, tchrText2, BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE, _T("フォルダーを選択してください。"));
 
 	if (bRes) {
 		GetFileList(tchrText2);

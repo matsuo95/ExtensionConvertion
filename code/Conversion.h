@@ -16,5 +16,4 @@ public:
 
 	CString ConvertExtensionString(CString Filepath);
 	void RenameExtension(CString Filepath);
-	void RenameExtensionList(vector<CString> FilepathList);
 };

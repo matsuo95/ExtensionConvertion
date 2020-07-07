@@ -32,12 +32,8 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedReferenceButton();
-	CEdit m_edit_displaypath;
-	CString m_displaypath_text;
 	CEdit m_edit_previous_extension;
 	CEdit m_edit_after_extension;
-	afx_msg void OnBnClickedConversionButton();
 	afx_msg void OnBnClickedReferenceListButton();
 	CListBox m_list_displaypath;
 	afx_msg void OnBnClickedConversionListButton();
