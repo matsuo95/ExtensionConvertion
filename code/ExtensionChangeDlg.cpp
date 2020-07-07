@@ -75,7 +75,7 @@ BEGIN_MESSAGE_MAP(CExtensionChangeDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON4, &CExtensionChangeDlg::OnBnClickedReferenceListButton)
 	ON_BN_CLICKED(IDC_BUTTON3, &CExtensionChangeDlg::OnBnClickedConversionListButton)
-	ON_BN_CLICKED(IDC_BUTTON5, &CExtensionChangeDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON5, &CExtensionChangeDlg::OnBnClickedReferenceFolderButton)
 END_MESSAGE_MAP()
 
 
@@ -229,6 +229,27 @@ void CExtensionChangeDlg::OnBnClickedConversionListButton()
 		m_list_displaypath.GetText(i, filepath);
 		after_conversion.RenameExtension(filepath);
 	}
+
+	CString complete_notification;
+	complete_notification.Format(_T("変換を行いました "));
+	AfxMessageBox(complete_notification);
+}
+
+void CExtensionChangeDlg::OnBnClickedReferenceFolderButton()
+{
+	char dir[MAX_PATH] = { '\0' };
+
+	const int tchrSize = sizeof(dir) + 1;
+	TCHAR tchrText2[tchrSize] = { _T('¥0') };
+	int res = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dir, sizeof(dir), tchrText2, tchrSize);
+
+	UpdateData(TRUE);
+
+	BOOL bRes = SelectFolder(this->m_hWnd, NULL, tchrText2, BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE, _T("フォルダーを選択してください。"));
+
+	if (bRes) {
+		GetFileList(tchrText2);
+	}
 }
 
 int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
@@ -244,7 +265,7 @@ int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpDa
 	return 0;
 }
 
-BOOL SelectFolder(HWND hWnd,LPCTSTR lpDefFolder,LPTSTR lpSelectPath,UINT nFlag,LPCTSTR lpTitle)
+BOOL CExtensionChangeDlg::SelectFolder(HWND hWnd,LPCTSTR lpDefFolder,LPTSTR lpSelectPath,UINT nFlag,LPCTSTR lpTitle)
 {
 	LPMALLOC pMalloc;
 	BOOL bRet = FALSE;
@@ -335,21 +356,4 @@ BOOL CExtensionChangeDlg::GetFileList(CString path)
 	} while (bResult);
 
 	return TRUE;
-}
-
-void CExtensionChangeDlg::OnBnClickedButton5()
-{
-	char dir[MAX_PATH] = { '\0' };
-
-	const int tchrSize = sizeof(dir) + 1;
-	TCHAR tchrText2[tchrSize] = { _T('¥0') };
-	int res = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dir, sizeof(dir), tchrText2, tchrSize);
-
-	UpdateData(TRUE);
-
-	BOOL bRes = SelectFolder( this->m_hWnd, NULL, tchrText2, BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE, _T("フォルダーを選択してください。"));
-
-	if (bRes) {
-		GetFileList(tchrText2);
-	}
 }

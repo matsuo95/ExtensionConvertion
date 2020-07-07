@@ -4,7 +4,6 @@
 Conversion::Conversion(CString previous_extension, CString after_extension)
 	:m_PreviousExtension(previous_extension),m_AfterExtension(after_extension)
 {
-
 };
 
 CString Conversion::ConvertExtensionString(CString Filepath) {

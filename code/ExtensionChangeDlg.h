@@ -34,9 +34,13 @@ protected:
 public:
 	CEdit m_edit_previous_extension;
 	CEdit m_edit_after_extension;
-	afx_msg void OnBnClickedReferenceListButton();
+
 	CListBox m_list_displaypath;
+
+	afx_msg void OnBnClickedReferenceListButton();
 	afx_msg void OnBnClickedConversionListButton();
-	afx_msg void OnBnClickedButton5();
+	afx_msg void OnBnClickedReferenceFolderButton();
+
+	BOOL SelectFolder(HWND hWnd, LPCTSTR lpDefFolder, LPTSTR lpSelectPath, UINT nFlag, LPCTSTR lpTitle);
 	BOOL GetFileList(CString path);
 };
