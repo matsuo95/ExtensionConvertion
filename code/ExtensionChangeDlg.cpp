@@ -364,7 +364,7 @@ BOOL CExtensionChangeDlg::GetFileList(CString path)
 			string str_filePath = CStringA(filePath).GetBuffer();
 			string str_PreviousExtension = CStringA(PreviousExtension).GetBuffer();
 
-			if (str_filePath.find(str_PreviousExtension) && 0) {
+			if (str_filePath.find(str_PreviousExtension) != std::string::npos) {
 
 				m_list_displaypath.AddString(filePath);
 			}
