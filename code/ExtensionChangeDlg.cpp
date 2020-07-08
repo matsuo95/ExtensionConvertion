@@ -10,6 +10,7 @@
 
 #include "Conversion.h"
 #include <atlpath.h>
+#include <set>
 
 
 #ifdef _DEBUG
@@ -248,7 +249,7 @@ void CExtensionChangeDlg::OnBnClickedReferenceFolderButton()
 	BOOL bRes = SelectFolder(this->m_hWnd, NULL, tchrText2, BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE, _T("フォルダーを選択してください。"));
 
 	if (bRes) {
-		GetFileList(tchrText2);
+		GetFileList(tchrText2,true);
 	}
 }
 
@@ -304,7 +305,7 @@ BOOL CExtensionChangeDlg::SelectFolder(HWND hWnd,LPCTSTR lpDefFolder,LPTSTR lpSe
 	return bRet;
 }
 
-BOOL CExtensionChangeDlg::GetFileList(CString path)
+BOOL CExtensionChangeDlg::GetFileList(CString path, bool flag)
 {
 	// ファイル検索を開始します。
 	CFileFind fileFind;
@@ -312,6 +313,13 @@ BOOL CExtensionChangeDlg::GetFileList(CString path)
 
 	// ファイル検索ができない場合、終了します。
 	if (!bResult) return FALSE;
+
+	// ファイルの場合に必要
+	CString PreviousExtension;
+	m_edit_previous_extension.GetWindowTextW(PreviousExtension);
+
+	string str_filePath;
+	string str_PreviousExtension = CStringA(PreviousExtension).GetBuffer();
 
 	// ファイルが検索できる間繰り返します。
 	do
@@ -324,32 +332,23 @@ BOOL CExtensionChangeDlg::GetFileList(CString path)
 		if (fileFind.IsDots()) continue;
 
 		// 検索した結果がディレクトリの場合
-		CString msg;
 		CString filePath = fileFind.GetFilePath();
-		if (fileFind.IsDirectory() && ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck() == BST_CHECKED)
+		if (fileFind.IsDirectory() && (((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck() == BST_CHECKED) || flag)
 		{
-			msg.Format(_T("Directory:%s\n"), filePath);
-			AfxOutputDebugString(msg);
-
+			flag = false;
 			// サブディレクトリを検索する場合、再帰呼出しします。
 			CPath subDir = filePath;
 			// ディレクトリ内のすべてのファイル・ディレクトリを対象とするため
 			// ワイルドカード"*"を指定します。
 			subDir.Append(_T("*"));
-			GetFileList(subDir);
+			GetFileList(subDir,flag);
 		}
-
 		// ファイルの場合
 		else
 		{
-			CString PreviousExtension;
-			m_edit_previous_extension.GetWindowTextW(PreviousExtension);
-
-			string str_filePath = CStringA(filePath).GetBuffer();
-			string str_PreviousExtension = CStringA(PreviousExtension).GetBuffer();
+			str_filePath = CStringA(filePath).GetBuffer();
 
 			if (str_filePath.find(str_PreviousExtension) != std::string::npos) {
-
 				m_list_displaypath.AddString(filePath);
 			}
 		}

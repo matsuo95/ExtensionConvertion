@@ -42,5 +42,5 @@ public:
 	afx_msg void OnBnClickedReferenceFolderButton();
 
 	BOOL SelectFolder(HWND hWnd, LPCTSTR lpDefFolder, LPTSTR lpSelectPath, UINT nFlag, LPCTSTR lpTitle);
-	BOOL GetFileList(CString path);
+	BOOL GetFileList(CString path,bool flag);
 };
